@@ -1004,6 +1004,8 @@ impl Syscall {
                 Self::fchmodat(dirfd, pathname, mode)
             }
 
+            SYS_SCHED_YIELD => Self::do_sched_yield(),
+
             SYS_SCHED_GETAFFINITY => {
                 let pid = args[0] as i32;
                 let size = args[1];

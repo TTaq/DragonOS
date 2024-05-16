@@ -19,7 +19,7 @@ use crate::{
     smp::cpu::ProcessorId,
 };
 
-use self::init::riscv_mm_init;
+use self::init::{riscv_mm_init, INITIAL_PGTABLE_VALUE};
 
 pub mod bump;
 pub(super) mod init;
@@ -43,6 +43,7 @@ pub struct RiscV64MMArch;
 
 impl RiscV64MMArch {
     /// 使远程cpu的TLB中，指定地址范围的页失效
+    #[allow(dead_code)]
     pub fn remote_invalidate_page(
         cpu: ProcessorId,
         address: VirtAddr,
@@ -57,6 +58,7 @@ impl RiscV64MMArch {
     }
 
     /// 使指定远程cpu的TLB中，所有范围的页失效
+    #[allow(dead_code)]
     pub fn remote_invalidate_all(cpu: ProcessorId) -> Result<(), SbiRet> {
         let r = Self::remote_invalidate_page(
             cpu,
@@ -105,7 +107,9 @@ impl MemoryManagementArch for RiscV64MMArch {
 
     const ENTRY_FLAG_PRESENT: usize = 1 << 0;
 
-    const ENTRY_FLAG_READONLY: usize = 0;
+    const ENTRY_FLAG_READONLY: usize = (1 << 1);
+
+    const ENTRY_FLAG_WRITEABLE: usize = (1 << 2);
 
     const ENTRY_FLAG_READWRITE: usize = (1 << 2) | (1 << 1);
 
@@ -183,7 +187,7 @@ impl MemoryManagementArch for RiscV64MMArch {
     }
 
     fn initial_page_table() -> PhysAddr {
-        todo!()
+        unsafe { INITIAL_PGTABLE_VALUE }
     }
 
     fn setup_new_usermapper() -> Result<UserMapper, SystemError> {
