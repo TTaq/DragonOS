@@ -16,11 +16,17 @@ members = [
 ]
 
 [features]
-default = ["backtrace", "kvm"]
+default = ["backtrace", "kvm", "lockdep"]
 # 内核栈回溯
 backtrace = []
 # kvm
 kvm = []
+#锁类
+lockdep = []
+CONFIG_PROVE_LOCKING = []
+CONFIG_LOCK_STAT = []
+CONFIG_SYSCTL = []
+
 
 
 # 运行时依赖项
